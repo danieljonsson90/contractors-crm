@@ -11,7 +11,9 @@ import { sortByName } from '@/app/utilities/helpers/helpers';
 import { useConsultantStore } from '@/app/core/stores/consultant-store';
 
 export default function Page() {
-  const [consultants, setConsultants] = useState<Consultant[]>([]);
+  const [consultants, setConsultants] = useState<Consultant[] | undefined>(
+    undefined
+  );
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedConsultant, setSelectedConsultant] =
@@ -22,7 +24,7 @@ export default function Page() {
 
   useEffect(() => {
     const fetch = async () => {
-      if (!allConsultants || allConsultants.length === 0) {
+      if ((!allConsultants || allConsultants.length === 0) && !consultants) {
         const consultants = await getConsultants();
         setConsultants(consultants);
         setAllConsultants(consultants);
@@ -32,19 +34,23 @@ export default function Page() {
       setLoading(false);
     };
     fetch();
-  }, [allConsultants, setAllConsultants]);
+  }, [allConsultants, setAllConsultants, consultants]);
 
   const columns = ['Name', 'Phone number', 'Email'];
-  sortByName(consultants);
-  const rows = consultants?.map((consultant) => {
-    return {
-      id: consultant.consultant_id,
-      values: [consultant.name, consultant.phone, consultant.email],
-    };
-  });
+  if (consultants) {
+    sortByName(consultants);
+  }
+  const rows = consultants
+    ? consultants.map((consultant) => {
+        return {
+          id: consultant.consultant_id,
+          values: [consultant.name, consultant.phone, consultant.email],
+        };
+      })
+    : [];
   const openModal = (rowIndex: number) => {
     setIsModalOpen(true);
-    setSelectedConsultant(consultants[rowIndex]);
+    setSelectedConsultant(consultants ? consultants[rowIndex] : null);
   };
 
   const deleteC = async () => {
@@ -59,7 +65,7 @@ export default function Page() {
     } else {
       deleteStoreConsultant(selectedConsultant.consultant_id as number);
       setConsultants(
-        consultants.filter(
+        consultants?.filter(
           (consultant) =>
             consultant.consultant_id !== selectedConsultant.consultant_id
         )

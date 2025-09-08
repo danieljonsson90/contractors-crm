@@ -12,7 +12,7 @@ import { sortByName } from '@/app/utilities/helpers/helpers';
 import { useClientStore } from '@/app/core/stores/client-store';
 
 export default function Page() {
-  const [clients, setClients] = useState<Client[]>([]);
+  const [clients, setClients] = useState<Client[] | undefined>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
@@ -21,7 +21,7 @@ export default function Page() {
 
   useEffect(() => {
     const fetchClients = async () => {
-      if (!allClients || allClients.length === 0) {
+      if ((!allClients || allClients.length === 0) && !clients) {
         const clients = await getClients();
         setClients(clients);
         setAllClients(clients);
@@ -31,20 +31,21 @@ export default function Page() {
       setLoading(false);
     };
     fetchClients();
-  }, [allClients, setAllClients]);
+  }, [allClients, setAllClients, clients]);
+  if (clients) sortByName(clients);
 
-  sortByName(clients);
-
-  const rows = clients?.map((client) => {
-    return {
-      id: client.client_id,
-      values: [client.name],
-    };
-  });
+  const rows = clients
+    ? clients.map((client) => {
+        return {
+          id: client.client_id,
+          values: [client.name],
+        };
+      })
+    : [];
 
   const openModal = (rowIndex: number) => {
     setIsModalOpen(true);
-    setSelectedClient(clients[rowIndex]);
+    setSelectedClient(clients ? clients[rowIndex] : null);
   };
   const deleteC = async () => {
     if (selectedClient === null) return;
@@ -56,7 +57,7 @@ export default function Page() {
     } else {
       setIsModalOpen(false);
       deleteStoreClient(id);
-      setClients(clients.filter((client) => client.client_id !== id));
+      setClients(clients?.filter((client) => client.client_id !== id));
       console.log('Client deleted:', data);
     }
   };

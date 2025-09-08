@@ -11,7 +11,7 @@ import { sortByName } from '@/app/utilities/helpers/helpers';
 import { usePartnerStore } from '@/app/core/stores/partner-store';
 
 export default function Page() {
-  const [partners, setPartners] = useState<Partner[]>([]);
+  const [partners, setPartners] = useState<Partner[] | undefined>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [partner, setSelectedPartner] = useState<Partner | null>();
@@ -20,7 +20,7 @@ export default function Page() {
 
   useEffect(() => {
     const fetchPartners = async () => {
-      if (!allPartners || allPartners.length === 0) {
+      if ((!allPartners || allPartners.length === 0) && !partners) {
         const partners = await getPartners();
         setPartners(partners);
         setAllPartners(partners);
@@ -30,20 +30,22 @@ export default function Page() {
       setLoading(false);
     };
     fetchPartners();
-  }, [allPartners, setAllPartners]);
+  }, [allPartners, setAllPartners, partners]);
 
-  sortByName(partners);
+  if (partners) sortByName(partners);
 
-  const rows = partners?.map((partner) => {
-    return {
-      id: partner.partner_id,
-      values: [partner.name],
-    };
-  });
+  const rows = partners
+    ? partners.map((partner) => {
+        return {
+          id: partner.partner_id,
+          values: [partner.name],
+        };
+      })
+    : [];
 
   const openModal = (rowIndex: number) => {
     setIsModalOpen(true);
-    setSelectedPartner(partners[rowIndex]);
+    setSelectedPartner(partners ? partners[rowIndex] : null);
   };
 
   const deleteP = async () => {
@@ -56,7 +58,7 @@ export default function Page() {
     } else {
       console.log('Partner deleted:', data);
       deleteStorePartner(partner?.partner_id as number);
-      setPartners(partners.filter((p) => p.partner_id !== partner.partner_id));
+      setPartners(partners?.filter((p) => p.partner_id !== partner.partner_id));
       setIsModalOpen(false);
     }
   };
