@@ -1,16 +1,12 @@
-import { createClient } from '@/lib/supabase/server';
+import { useAuthStore } from '@/app/core/stores/auth-store';
 import { LogoutButton } from './logout-button';
 
-export async function AuthButton() {
-  const supabase = await createClient();
+export function AuthButton() {
+  const { email } = useAuthStore();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  return user ? (
+  return email ? (
     <div className="flex items-center justify-end w-full gap-4 mt-2 mb-4 mr-2">
-      <span className="hidden lg:block">Hey, {user.email}!</span>
+      <span className="hidden lg:block">Hey, {email}!</span>
       <LogoutButton />
     </div>
   ) : undefined;

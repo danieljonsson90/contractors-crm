@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/supabaseClient';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -20,25 +20,19 @@ export function LoginForm({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const origin = typeof window !== 'undefined' ? window.location.origin : null;
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const supabase = createClient();
     setIsLoading(true);
     setError(null);
-
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      await supabase.auth.signInWithOAuth({
         provider: 'azure',
         options: {
           scopes: 'email',
-          redirectTo: `${origin}/auth/callback`,
         },
       });
-      if (error) console.log(error);
-      console.log('data', data);
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push('/protected');
+      router.push('/');
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred');
       console.log('error');
