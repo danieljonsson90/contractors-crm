@@ -11,7 +11,7 @@ import { sortByName } from '@/app/utilities/helpers/helpers';
 import { usePartnerStore } from '@/app/core/stores/partner-store';
 
 export default function Page() {
-  const [partners, setPartners] = useState<Partner[] | undefined>([]);
+  const [partners, setPartners] = useState<Partner[] | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [partner, setSelectedPartner] = useState<Partner | null>();

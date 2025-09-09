@@ -12,7 +12,7 @@ import { sortByName } from '@/app/utilities/helpers/helpers';
 import { useClientStore } from '@/app/core/stores/client-store';
 
 export default function Page() {
-  const [clients, setClients] = useState<Client[] | undefined>([]);
+  const [clients, setClients] = useState<Client[] | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
@@ -21,6 +21,7 @@ export default function Page() {
 
   useEffect(() => {
     const fetchClients = async () => {
+      debugger;
       if ((!allClients || allClients.length === 0) && !clients) {
         const clients = await getClients();
         setClients(clients);
