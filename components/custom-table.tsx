@@ -109,7 +109,10 @@ export function CustomTable({
                   >
                     {index === 0 ? (
                       type === 'assignments' ? (
-                        <CustomLink href={`/details/${row.detailsId}`}>
+                        <CustomLink
+                          href={`/details/${row.detailsId}`}
+                          aria-label="Go to details page"
+                        >
                           {row.values[index]}
                         </CustomLink>
                       ) : (
@@ -130,6 +133,7 @@ export function CustomTable({
                         }))
                       }
                       variant={'icon'}
+                      aria-label="Open actions menu"
                     >
                       <MenuIcon />
                     </Button>
