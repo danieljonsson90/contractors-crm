@@ -21,7 +21,6 @@ export default function Page() {
 
   useEffect(() => {
     const fetchClients = async () => {
-      debugger;
       if ((!allClients || allClients.length === 0) && !clients) {
         const clients = await getClients();
         setClients(clients);
