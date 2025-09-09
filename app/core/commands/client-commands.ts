@@ -1,5 +1,4 @@
-import { createClient } from '@/lib/supabase/client';
-const supabase = createClient();
+import { supabase } from '@/lib/supabase/supabaseClient';
 
 export const updateClient = async (id: number, name: string) => {
   const { data, error } = await supabase

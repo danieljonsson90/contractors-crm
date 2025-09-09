@@ -1,6 +1,5 @@
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/supabaseClient';
 import { ConsultantAssignment } from '../types/types';
-const supabase = createClient();
 
 export const updateConsultantAssignment = async (
   id: number,

@@ -1,6 +1,4 @@
-import { createClient } from '@/lib/supabase/client';
-
-const supabase = createClient();
+import { supabase } from '@/lib/supabase/supabaseClient';
 
 export const getConsultants = async () => {
   const { data: consultants, error } = await supabase
