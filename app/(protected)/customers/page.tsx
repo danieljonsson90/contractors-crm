@@ -10,13 +10,20 @@ import CustomLink from '@/components/ui/link';
 import { LoadingSpinner } from '@/components/ui/spinner';
 import { sortByName } from '@/app/utilities/helpers/helpers';
 import { useClientStore } from '@/app/core/stores/client-store';
+import { ClientRealTimeChanges } from '@/app/core/realtime-changes/client-changes';
 
 export default function Page() {
   const [clients, setClients] = useState<Client[] | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const { allClients, setAllClients, deleteStoreClient } = useClientStore();
+  const {
+    allClients,
+    setAllClients,
+    deleteStoreClient,
+    addStoreClient,
+    updateStoreClient,
+  } = useClientStore();
   const [errorDelete, setErrorDelete] = useState<boolean>(false);
 
   useEffect(() => {
@@ -32,6 +39,18 @@ export default function Page() {
     };
     fetchClients();
   }, [allClients, setAllClients, clients]);
+
+  useEffect(() => {
+    const channel = ClientRealTimeChanges({
+      deleteStoreClient,
+      addStoreClient,
+      updateStoreClient,
+    });
+    return () => {
+      channel.unsubscribe();
+    };
+  });
+
   if (clients) sortByName(clients);
 
   const rows = clients
